@@ -1,7 +1,7 @@
-training-cli
+terry-spy
 ============
 
-Strumento da linea di comando per verificare i progressi di un utente di [territoriali.olinfo.it](territoriali.olinfo.it) ([cmsocial](https://github.com/algorithm-ninja/terry)).
+Strumento da linea di comando per verificare i progressi di un utente di [territoriali.olinfo.it](territoriali.olinfo.it) ([terry](https://github.com/algorithm-ninja/terry)).
 
 Installazione
 -------------
