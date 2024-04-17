@@ -13,7 +13,6 @@
  *  limitations under the License.
  */
 
-
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
@@ -31,5 +30,11 @@ impl From<reqwest::Error> for Error {
 impl From<String> for Error {
     fn from(value: String) -> Self {
         Self::Generic(value)
+    }
+}
+
+impl From<&str> for Error {
+    fn from(value: &str) -> Self {
+        Self::Generic(value.to_string())
     }
 }
