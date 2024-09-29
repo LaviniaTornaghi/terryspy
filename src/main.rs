@@ -15,9 +15,9 @@
 
 mod error;
 
-use std::env;
-use serde::Deserialize;
 use colored::*;
+use serde::Deserialize;
+use std::env;
 
 #[derive(Debug, Deserialize)]
 struct Task {
@@ -36,7 +36,7 @@ const MAX_ID_SIZE: usize = 15;
 
 fn trim_id(id: &str) -> String {
     if id.len() > MAX_ID_SIZE {
-        format!("{}...", &id[..MAX_ID_SIZE - 3]) 
+        format!("{}...", &id[..MAX_ID_SIZE - 3])
     } else {
         id.to_owned()
     }
@@ -76,10 +76,14 @@ fn print_people(people: &[Person]) {
             (score + task.score, total_score + task.max_score)
         });
 
-        print!(" {:>width$} |", score_str(score, total_score), width = MAX_ID_SIZE);
+        print!(
+            " {:>width$} |",
+            score_str(score, total_score),
+            width = MAX_ID_SIZE
+        );
     }
     println!();
-    
+
     //prints empty line
     print!("{:->width$}|", "", width = MAX_ID_SIZE + 2);
     for _ in people {
@@ -89,21 +93,37 @@ fn print_people(people: &[Person]) {
 
     // prints scores
     for i in 0..task_no {
-        print!(" {:>width$} |", trim_id(&people[0].tasks[i].name), width = MAX_ID_SIZE);
+        print!(
+            " {:>width$} |",
+            trim_id(&people[0].tasks[i].name),
+            width = MAX_ID_SIZE
+        );
         for Person { tasks, .. } in people {
-            print!(" {:>width$} |", score_str(tasks[i].score, tasks[i].max_score), width = MAX_ID_SIZE);
+            print!(
+                " {:>width$} |",
+                score_str(tasks[i].score, tasks[i].max_score),
+                width = MAX_ID_SIZE
+            );
         }
         println!();
     }
 }
 
 fn query(username: &str) -> error::Result<Person> {
-    let tasks: Vec<Task> = reqwest::blocking::get(format!("https://territoriali.olinfo.it/api/user/{username}/scores"))?.json()?;
-    
-    if tasks.len() == 0 {
-        Err(error::Error::from(format!("User '{username}' does not exist!")))
+    let tasks: Vec<Task> = reqwest::blocking::get(format!(
+        "https://territoriali.olinfo.it/api/user/{username}/scores"
+    ))?
+    .json()?;
+
+    if tasks.is_empty() {
+        Err(error::Error::from(format!(
+            "User '{username}' does not exist!"
+        )))
     } else {
-        Ok(Person { username: username.to_string(), tasks })
+        Ok(Person {
+            username: username.to_string(),
+            tasks,
+        })
     }
 }
 
@@ -114,7 +134,10 @@ fn main() -> error::Result<()> {
         return Err(error::Error::from("No arguments given!"));
     }
 
-    let people = args[1..].iter().map(|username| query(username)).collect::<Result<Vec<_>, _>>()?;
+    let people = args[1..]
+        .iter()
+        .map(|username| query(username))
+        .collect::<Result<Vec<_>, _>>()?;
     print_people(&people);
 
     Ok(())
